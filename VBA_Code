@@ -7,24 +7,25 @@ Dim pptShape As Shape
 
 'Set the variable to the PowerPoint Presentation and the excel file Path
 Set pptPresentation = ActivePresentation
-newFilePath = pptPresentation.Path & "\Test.xlsx"
+newFilePath = pptPresentation.Path & "\DATA.xlsx"
 ' MsgBox (pptPresentation.Path & "\Test.xlsx")
 
 'Loop through each slide in the presentation
 For Each pptSlide In pptPresentation.Slides
-
     'Loop through each shape in each slide
     For Each pptShape In pptSlide.Shapes
-        ' If any shape is not recogniced use the pptShape.Type command to see which it is to add it to the IF statement
-        ' MsgBox (pptShape.Type)
-   
         'Find out if the shape is a linked object or a linked picture
-        If pptShape.Type = 3 Then
-        ' If pptShape.Type = msoLinkedPicture Or pptShape.Type = msoLinkedOLEObject Or pptShape.Type = msoLinkedChart Then
-        
+        If pptShape.Type = 3 Or pptShape.Type = 10 Then
             'Use Replace to change the oldFilePath to the newFilePath
             pptShape.LinkFormat.SourceFullName = newFilePath
             ' pptShape.LinkFormat.SourceFullName = Replace(pptShape.LinkFormat.SourceFullName, oldFilePath, newFilePath)
+        Else
+            ' Ignore Textboxes and Images
+            If pptShape.Type <> 13 And pptShape.Type <> 17 Then
+                ' If any shape is not recogniced use the pptShape.Type command to see which it is to add it to the IF statement
+                MsgBox (pptShape.Type)
+                ' TypeCodes: https://learn.microsoft.com/en-us/office/vba/api/office.msoshapetype
+            End If
         End If
     Next
 Next
@@ -32,6 +33,7 @@ Next
 'Update the links
 pptPresentation.UpdateLinks
 End Sub
+
 
 ' Based on:
 ' https://www.rdpslides.com/pptfaq/FAQ00759_Search_-_Replace_to_change_OLE_link_paths.htm
